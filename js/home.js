@@ -5,8 +5,8 @@ const salons = [
         location: "Downtown",
         rating: 4.8,
         reviews: 245,
-        image: "✨",
-        description: "Premium hair care and styling services",
+        image: "https://images.unsplash.com/photo-1633273432032-a967ff023ffe?w=500&h=280&fit=crop",
+        description: "Premium hair services with master stylists specializing in cuts, color, and treatments.",
         services: ["Haircut", "Coloring", "Extensions"]
     },
     {
@@ -15,8 +15,8 @@ const salons = [
         location: "Midtown",
         rating: 4.9,
         reviews: 312,
-        image: "🧖",
-        description: "Luxury spa and facial treatments",
+        image: "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=500&h=280&fit=crop",
+        description: "Luxury spa with premium facials, massages, and holistic body treatments.",
         services: ["Facials", "Massage", "Body Treatments"]
     },
     {
@@ -25,8 +25,8 @@ const salons = [
         location: "Westside",
         rating: 4.7,
         reviews: 189,
-        image: "💅",
-        description: "Nail art and beauty services",
+        image: "https://images.unsplash.com/photo-1604654894610-df63bc536371?w=500&h=280&fit=crop",
+        description: "Artistic nail designs and premium nail care with top-rated technicians.",
         services: ["Manicure", "Pedicure", "Nail Art"]
     },
     {
@@ -35,8 +35,8 @@ const salons = [
         location: "Eastside",
         rating: 4.9,
         reviews: 276,
-        image: "🌿",
-        description: "Holistic wellness and beauty treatments",
+        image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=500&h=280&fit=crop",
+        description: "Holistic wellness center offering therapeutic massages and premium skincare.",
         services: ["Massage", "Skincare", "Wellness"]
     },
     {
@@ -45,8 +45,8 @@ const salons = [
         location: "Central Plaza",
         rating: 4.6,
         reviews: 198,
-        image: "💈",
-        description: "Contemporary barbering and grooming",
+        image: "https://images.unsplash.com/photo-1585747860715-cd4628902d4a?w=500&h=280&fit=crop",
+        description: "Contemporary barbering and grooming with expert barbers in a refined setting.",
         services: ["Haircut", "Beard Trim", "Styling"]
     },
     {
@@ -55,47 +55,44 @@ const salons = [
         location: "North District",
         rating: 4.8,
         reviews: 234,
-        image: "👑",
-        description: "Full beauty and aesthetic services",
+        image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=500&h=280&fit=crop",
+        description: "Full-service beauty center offering makeup, skincare, and hair services.",
         services: ["Makeup", "Skincare", "Hair"]
     }
 ];
 
 let currentSalon = null;
 
-// Render salons
 function renderSalons() {
     const salonsGrid = document.getElementById('salonsGrid');
     salonsGrid.innerHTML = salons.map(salon => `
-                <div class="salon-card">
-                    <div class="salon-image">${salon.image}</div>
-                    <div class="salon-content">
-                        <h3 class="salon-name">${salon.name}</h3>
-                        <div class="salon-meta">
-                            <span>📍 ${salon.location}</span>
-                            <span>⭐ ${salon.rating}</span>
-                        </div>
-                        <p class="salon-description">${salon.description}</p>
-                        <div class="salon-services">
-                            ${salon.services.map(service => `<span class="service-tag">${service}</span>`).join('')}
-                        </div>
-                        <div class="salon-footer">
-                            <div class="salon-rating">
-                                <span class="stars">★★★★★</span>
-                                <span style="color: var(--text-light); font-size: 0.85rem;">${salon.reviews} reviews</span>
-                            </div>
-                            <button class="salon-action" onclick="openBookingModal(${salon.id}, '${salon.name}')">Book Now</button>
-                        </div>
-                    </div>
+        <div class="salon-card">
+            <div class="salon-image-wrapper">
+                <img src="${salon.image}" alt="${salon.name}">
+                <div class="salon-badge">Premium</div>
+            </div>
+            <div class="salon-content">
+                <h3 class="salon-name">${salon.name}</h3>
+                <div class="salon-location">📍 ${salon.location}</div>
+                <p class="salon-description">${salon.description}</p>
+                <div class="salon-services">
+                    ${salon.services.map(service => `<span class="service-tag">${service}</span>`).join('')}
                 </div>
-            `).join('');
+                <div class="salon-footer">
+                    <div class="salon-rating">
+                        <span class="stars">★★★★★</span>
+                        <span class="review-count">${salon.reviews} reviews</span>
+                    </div>
+                    <button class="salon-book-btn" onclick="openBookingModal(${salon.id}, '${salon.name}')">Book</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
 }
 
-// Modal functions
 function openBookingModal(salonId, salonName) {
     currentSalon = salons.find(s => s.id === salonId);
     document.getElementById('selectedSalon').textContent = salonName;
-    document.getElementById('selectedService').textContent = currentSalon.services[0];
     document.getElementById('bookingModal').classList.add('show');
     document.body.style.overflow = 'hidden';
 }
@@ -108,20 +105,6 @@ function closeModal() {
 
 function submitBooking(event) {
     event.preventDefault();
-
-    const formData = {
-        name: document.getElementById('clientName').value,
-        email: document.getElementById('clientEmail').value,
-        phone: document.getElementById('clientPhone').value,
-        date: document.getElementById('appointmentDate').value,
-        time: document.getElementById('appointmentTime').value,
-        service: document.getElementById('servicePreference').value,
-        notes: document.getElementById('additionalNotes').value,
-        salon: currentSalon.name
-    };
-
-    console.log('Booking submitted:', formData);
-
     closeModal();
     showSuccessMessage();
 }
@@ -134,7 +117,6 @@ function showSuccessMessage() {
     }, 5000);
 }
 
-// Close modal on outside click
 window.onclick = function(event) {
     const modal = document.getElementById('bookingModal');
     if (event.target === modal) {
@@ -142,5 +124,4 @@ window.onclick = function(event) {
     }
 }
 
-// Initialize
 renderSalons();
