@@ -24,12 +24,12 @@ import {
 // ================================
 // Replace this with your real Firebase project config
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyAx2PwB0VcQXuY1j_c9uu-Mq6BVIJHKVQo",
+    authDomain: "bookmysalon-efe40.firebaseapp.com",
+    projectId: "bookmysalon-efe40",
+    storageBucket: "bookmysalon-efe40.firebasestorage.app",
+    messagingSenderId: "410919574149",
+    appId: "1:410919574149:web:12acd805646220e58be7ec"
 };
 
 
