@@ -2,9 +2,171 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/home.css">
+    <title>BookMySolon - Book Your Perfect Appointment</title>
 </head>
 <body>
+<!-- Header -->
+<header>
+    <nav>
+        <div class="logo">BookMySalon<span>Salon</span></div>
+        <ul class="nav-links">
+            <li><a href="#salons">Salons</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+        <button class="btn-primary">Sign In</button>
+    </nav>
+</header>
 
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Find & Book Your <span class="highlight">Perfect Salon</span></h1>
+        <p>Discover premium salons in your area and book appointments with top-rated professionals instantly. Your beauty journey starts here.</p>
+        <div class="hero-buttons">
+            <button class="btn-primary" onclick="document.getElementById('salons').scrollIntoView()">Browse Salons</button>
+            <button class="btn-secondary">Learn More</button>
+        </div>
+    </div>
+</section>
+
+<!-- Search Section -->
+<section class="search-section">
+    <div class="search-container">
+        <div class="form-group">
+            <label>Location</label>
+            <input type="text" placeholder="City or area">
+        </div>
+        <div class="form-group">
+            <label>Service</label>
+            <select>
+                <option>All Services</option>
+                <option>Haircut</option>
+                <option>Styling</option>
+                <option>Facial</option>
+                <option>Massage</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Date</label>
+            <input type="date">
+        </div>
+        <button class="btn-primary" style="height: fit-content;">Search</button>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="services-section" id="services">
+    <h2 class="section-title">Our Services</h2>
+    <p class="section-subtitle">Premium beauty and wellness treatments at your fingertips</p>
+    <div class="services-grid">
+        <div class="service-box">
+            <div class="service-icon">✂️</div>
+            <h3>Hair Services</h3>
+            <p>Professional haircuts, styling, coloring, and treatments</p>
+        </div>
+        <div class="service-box">
+            <div class="service-icon">💅</div>
+            <h3>Nail Care</h3>
+            <p>Manicures, pedicures, and artistic nail designs</p>
+        </div>
+        <div class="service-box">
+            <div class="service-icon">🧖</div>
+            <h3>Facial & Skincare</h3>
+            <p>Premium facial treatments and skincare services</p>
+        </div>
+        <div class="service-box">
+            <div class="service-icon">💆</div>
+            <h3>Massages</h3>
+            <p>Relaxing and therapeutic massage treatments</p>
+        </div>
+    </div>
+</section>
+
+<!-- Salons Section -->
+<section class="salons-section" id="salons">
+    <h2 class="section-title">Featured Salons</h2>
+    <p class="section-subtitle">Explore our curated selection of premium salons</p>
+    <div class="salons-grid" id="salonsGrid"></div>
+</section>
+
+<!-- Booking Modal -->
+<div id="bookingModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Book an Appointment</h2>
+            <button class="close-btn" onclick="closeModal()">×</button>
+        </div>
+
+        <div class="booking-summary" id="bookingSummary">
+            <p><strong>Salon:</strong> <span id="selectedSalon"></span></p>
+            <p><strong>Service:</strong> <span id="selectedService"></span></p>
+        </div>
+
+        <form class="booking-form" onsubmit="submitBooking(event)">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="clientName" required>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="clientEmail" required>
+            </div>
+
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="clientPhone" required>
+            </div>
+
+            <div class="form-group">
+                <label>Appointment Date</label>
+                <input type="date" id="appointmentDate" required>
+            </div>
+
+            <div class="form-group">
+                <label>Appointment Time</label>
+                <input type="time" id="appointmentTime" required>
+            </div>
+
+            <div class="form-group">
+                <label>Service Preference</label>
+                <select id="servicePreference" required>
+                    <option>Select a service</option>
+                    <option>Haircut - $50</option>
+                    <option>Hair Styling - $75</option>
+                    <option>Hair Coloring - $120</option>
+                    <option>Facial Treatment - $80</option>
+                    <option>Massage (60min) - $90</option>
+                    <option>Nail Art - $45</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Additional Notes</label>
+                <textarea id="additionalNotes" placeholder="Any special requests or preferences..."></textarea>
+            </div>
+
+            <div class="modal-buttons">
+                <button type="submit" class="btn-confirm">Confirm Booking</button>
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Success Message -->
+<div id="successMessage" class="success-message">
+    ✓ Booking confirmed! You'll receive a confirmation email shortly.
+</div>
+
+<!-- Footer -->
+<footer id="about">
+    <p>&copy; 2026 BookMySalon. Premium Salon Booking Platform.</p>
+    <p>Making beauty accessible and convenient for everyone.</p>
+</footer>
+<script src="js/home.js"></script>
 </body>
 </html>
