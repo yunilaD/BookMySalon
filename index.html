@@ -3,31 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeSalon - Premium Beauty Booking</title>
     <link rel="stylesheet" href="css/home.css">
-    <title>BookMySolon - Book Your Perfect Appointment</title>
 </head>
 <body>
 <!-- Header -->
 <header>
-    <nav>
-        <div class="logo">BookMySalon<span>Salon</span></div>
+    <nav class="navbar">
+        <div class="logo">Luxe<span>Salon</span></div>
         <ul class="nav-links">
-            <li><a href="#salons">Salons</a></li>
+            <li><a href="#salons">Discover</a></li>
             <li><a href="#services">Services</a></li>
             <li><a href="#about">About</a></li>
         </ul>
-        <button class="btn-primary">Sign In</button>
+        <button class="btn-signin">Sign In</button>
     </nav>
 </header>
 
 <!-- Hero Section -->
 <section class="hero">
-    <div class="hero-content">
-        <h1>Find & Book Your <span class="highlight">Perfect Salon</span></h1>
-        <p>Discover premium salons in your area and book appointments with top-rated professionals instantly. Your beauty journey starts here.</p>
-        <div class="hero-buttons">
-            <button class="btn-primary" onclick="document.getElementById('salons').scrollIntoView()">Browse Salons</button>
-            <button class="btn-secondary">Learn More</button>
+    <div class="hero-background">
+        <img src="assets/hero.jpg" alt="Premium salon experience">
+        <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content-wrapper">
+        <div class="hero-content">
+            <div class="hero-label">Premium Beauty Experience</div>
+            <h1>Elevate Your<br><span class="highlight">Self Care</span></h1>
+            <p>Discover curated salons and book with world-class beauty professionals. Luxury has never been more accessible.</p>
+            <div class="hero-cta">
+                <button class="btn-primary" onclick="document.getElementById('salons').scrollIntoView({behavior: 'smooth'})">Explore Salons</button>
+                <button class="btn-outline">Learn More</button>
+            </div>
         </div>
     </div>
 </section>
@@ -35,138 +42,124 @@
 <!-- Search Section -->
 <section class="search-section">
     <div class="search-container">
-        <div class="form-group">
-            <label>Location</label>
-            <input type="text" placeholder="City or area">
-        </div>
-        <div class="form-group">
-            <label>Service</label>
-            <select>
-                <option>All Services</option>
-                <option>Haircut</option>
-                <option>Styling</option>
-                <option>Facial</option>
-                <option>Massage</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Date</label>
-            <input type="date">
-        </div>
-        <button class="btn-primary" style="height: fit-content;">Search</button>
+        <input type="text" placeholder="City or area" class="search-input">
+        <select class="search-select">
+            <option>All Services</option>
+            <option>Haircut</option>
+            <option>Styling</option>
+            <option>Facial</option>
+            <option>Massage</option>
+        </select>
+        <input type="date" class="search-input">
+        <button class="btn-primary">Search</button>
     </div>
 </section>
 
 <!-- Services Section -->
 <section class="services-section" id="services">
-    <h2 class="section-title">Our Services</h2>
-    <p class="section-subtitle">Premium beauty and wellness treatments at your fingertips</p>
+    <div class="section-header">
+        <h2>Our Services</h2>
+        <p>Carefully curated treatments for every beauty need</p>
+    </div>
     <div class="services-grid">
-        <div class="service-box">
-            <div class="service-icon">✂️</div>
+        <div class="service-card">
+            <div class="service-number">01</div>
             <h3>Hair Services</h3>
-            <p>Professional haircuts, styling, coloring, and treatments</p>
+            <p>Professional cuts, color, and treatments from master stylists</p>
         </div>
-        <div class="service-box">
-            <div class="service-icon">💅</div>
-            <h3>Nail Care</h3>
-            <p>Manicures, pedicures, and artistic nail designs</p>
+        <div class="service-card">
+            <div class="service-number">02</div>
+            <h3>Facial & Skin</h3>
+            <p>Premium facials and skincare treatments for radiant skin</p>
         </div>
-        <div class="service-box">
-            <div class="service-icon">🧖</div>
-            <h3>Facial & Skincare</h3>
-            <p>Premium facial treatments and skincare services</p>
+        <div class="service-card">
+            <div class="service-number">03</div>
+            <h3>Nail Art</h3>
+            <p>Artistic designs and premium nail care services</p>
         </div>
-        <div class="service-box">
-            <div class="service-icon">💆</div>
-            <h3>Massages</h3>
-            <p>Relaxing and therapeutic massage treatments</p>
+        <div class="service-card">
+            <div class="service-number">04</div>
+            <h3>Wellness</h3>
+            <p>Holistic massage and spa treatments for relaxation</p>
         </div>
     </div>
 </section>
 
 <!-- Salons Section -->
 <section class="salons-section" id="salons">
-    <h2 class="section-title">Featured Salons</h2>
-    <p class="section-subtitle">Explore our curated selection of premium salons</p>
+    <div class="section-header">
+        <h2>Featured Salons</h2>
+        <p>Premium venues handpicked for excellence</p>
+    </div>
     <div class="salons-grid" id="salonsGrid"></div>
 </section>
 
 <!-- Booking Modal -->
 <div id="bookingModal" class="modal">
     <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">×</button>
         <div class="modal-header">
-            <h2>Book an Appointment</h2>
-            <button class="close-btn" onclick="closeModal()">×</button>
-        </div>
-
-        <div class="booking-summary" id="bookingSummary">
-            <p><strong>Salon:</strong> <span id="selectedSalon"></span></p>
-            <p><strong>Service:</strong> <span id="selectedService"></span></p>
+            <h2>Book Appointment</h2>
+            <div class="booking-summary" id="bookingSummary">
+                <p><strong id="selectedSalon"></strong></p>
+            </div>
         </div>
 
         <form class="booking-form" onsubmit="submitBooking(event)">
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" id="clientName" required>
-            </div>
-
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="clientEmail" required>
-            </div>
-
-            <div class="form-group">
-                <label>Phone Number</label>
-                <input type="tel" id="clientPhone" required>
-            </div>
-
-            <div class="form-group">
-                <label>Appointment Date</label>
-                <input type="date" id="appointmentDate" required>
-            </div>
-
-            <div class="form-group">
-                <label>Appointment Time</label>
-                <input type="time" id="appointmentTime" required>
-            </div>
-
-            <div class="form-group">
-                <label>Service Preference</label>
-                <select id="servicePreference" required>
-                    <option>Select a service</option>
-                    <option>Haircut - $50</option>
-                    <option>Hair Styling - $75</option>
-                    <option>Hair Coloring - $120</option>
-                    <option>Facial Treatment - $80</option>
-                    <option>Massage (60min) - $90</option>
-                    <option>Nail Art - $45</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Additional Notes</label>
-                <textarea id="additionalNotes" placeholder="Any special requests or preferences..."></textarea>
-            </div>
-
-            <div class="modal-buttons">
-                <button type="submit" class="btn-confirm">Confirm Booking</button>
-                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-            </div>
+            <input type="text" id="clientName" placeholder="Full Name" required>
+            <input type="email" id="clientEmail" placeholder="Email" required>
+            <input type="tel" id="clientPhone" placeholder="Phone Number" required>
+            <input type="date" id="appointmentDate" required>
+            <input type="time" id="appointmentTime" required>
+            <select id="servicePreference" required>
+                <option>Select service</option>
+                <option>Haircut - $50</option>
+                <option>Hair Styling - $75</option>
+                <option>Hair Coloring - $120</option>
+                <option>Facial Treatment - $80</option>
+                <option>Massage (60min) - $90</option>
+                <option>Nail Art - $45</option>
+            </select>
+            <textarea id="additionalNotes" placeholder="Special requests..."></textarea>
+            <button type="submit" class="btn-primary btn-full">Confirm Booking</button>
         </form>
     </div>
 </div>
 
 <!-- Success Message -->
 <div id="successMessage" class="success-message">
-    ✓ Booking confirmed! You'll receive a confirmation email shortly.
+    <div class="success-content">
+        <div class="success-icon">✓</div>
+        <p>Booking confirmed! Check your email for details.</p>
+    </div>
 </div>
 
 <!-- Footer -->
 <footer id="about">
-    <p>&copy; 2026 BookMySalon. Premium Salon Booking Platform.</p>
-    <p>Making beauty accessible and convenient for everyone.</p>
+    <div class="footer-content">
+        <div>
+            <h4>LuxeSalon</h4>
+            <p>Premium salon booking platform for discerning clients.</p>
+        </div>
+        <div>
+            <h4>Quick Links</h4>
+            <ul>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4>Contact</h4>
+            <p>hello@luxesalon.com</p>
+            <p>+1 (555) 123-4567</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 LuxeSalon. All rights reserved.</p>
+    </div>
 </footer>
+
 <script src="js/home.js"></script>
 </body>
 </html>
