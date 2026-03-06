@@ -121,6 +121,25 @@ function submitBooking(event) {
         return;
     }
 
+    await addDoc(collection(db, "bookings"), {
+
+        userId: currentUser.uid,
+        salonId: currentSalon.id,
+        salonName: currentSalon.name,
+
+        name: document.getElementById("clientName").value,
+        email: document.getElementById("clientEmail").value,
+        phone: document.getElementById("clientPhone").value,
+
+        date: document.getElementById("appointmentDate").value,
+        time: document.getElementById("appointmentTime").value,
+
+        service: document.getElementById("servicePreference").value,
+        notes: document.getElementById("additionalNotes").value,
+
+        createdAt: new Date()
+    });
+
     closeModal();
     showSuccessMessage();
 }
@@ -170,7 +189,15 @@ window.handleAuth = async function (event) {
             await signInWithEmailAndPassword(auth, email, password);
             alert("Signed in successfully");
         } else {
-            await createUserWithEmailAndPassword(auth, email, password);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            await setDoc(doc(db, "users", user.uid), {
+                uid: user.uid,
+                email: email,
+                role: "customer",
+                createdAt: new Date()
+            });
             alert("Account created successfully");
         }
 
