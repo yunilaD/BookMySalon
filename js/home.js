@@ -254,15 +254,19 @@ async function sendBookingEmailWithWeb3Forms(bookingData) {
     const formData = new FormData();
 
     formData.append("access_key", "b3af3559-44b4-4083-812e-4d07b9d7dc6d");
-    formData.append("subject", `Booking Confirmation - ${bookingData.salonName}`);
+    formData.append("subject", `New Booking - ${bookingData.salonName}`);
     formData.append("from_name", "BookMySalon");
+
+    // admin gets main notification
+    // customer gets autoresponse
+    formData.append("email", bookingData.email);
     formData.append("replyto", bookingData.email);
 
     formData.append(
         "autoresponse",
         `Hi ${bookingData.name},
 
-Your booking has been confirmed.
+Your appointment has been confirmed.
 
 Salon: ${bookingData.salonName}
 Service: ${bookingData.service}
@@ -275,7 +279,6 @@ Thank you for booking with BookMySalon.`
     );
 
     formData.append("name", bookingData.name);
-    formData.append("email", bookingData.email);
     formData.append("phone", bookingData.phone);
     formData.append("date", bookingData.date);
     formData.append("time", bookingData.time);
