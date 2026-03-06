@@ -1,45 +1,72 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-import { 
-getAuth,
-signInWithEmailAndPassword,
-createUserWithEmailAndPassword,
-onAuthStateChanged,
-signOut
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-getFirestore,
-collection,
-addDoc,
-getDocs
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    setDoc,
+    doc,
+    getDoc,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
+/* ---------------- FIREBASE CONFIG ---------------- */
+
 const firebaseConfig = {
 
-apiKey: "AIzaSyAx2PwB0VcQXuY1j_c9uu-Mq6BVIJHKVQo",
-authDomain: "bookmysalon-efe40.firebaseapp.com",
-projectId: "bookmysalon-efe40",
-storageBucket: "bookmysalon-efe40.firebasestorage.app",
-messagingSenderId: "410919574149",
-appId: "1:410919574149:web:12acd805646220e58be7ec"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+
 };
 
 
+/* ---------------- INITIALIZE APP ---------------- */
+
 const app = initializeApp(firebaseConfig);
 
+
+/* ---------------- AUTH ---------------- */
+
 export const auth = getAuth(app);
+
+
+/* ---------------- FIRESTORE ---------------- */
 
 export const db = getFirestore(app);
 
 
+/* ---------------- EXPORT AUTH FUNCTIONS ---------------- */
+
 export {
-signInWithEmailAndPassword,
-createUserWithEmailAndPassword,
-onAuthStateChanged,
-signOut,
-collection,
-addDoc,
-getDocs
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+};
+
+
+/* ---------------- EXPORT FIRESTORE HELPERS ---------------- */
+
+export {
+    collection,
+    addDoc,
+    getDocs,
+    setDoc,
+    doc,
+    getDoc,
+    serverTimestamp
 };
