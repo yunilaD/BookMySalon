@@ -52,10 +52,17 @@ header {
     font-size: 1.4rem;
     font-weight: 700;
     letter-spacing: -1.5px;
+    display: flex;
+    align-items: center;
 }
 
 .logo span {
     color: var(--accent);
+}
+
+.logo img {
+    height: 50px;
+    width: auto;
 }
 
 .nav-links {
