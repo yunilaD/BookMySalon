@@ -107,24 +107,24 @@ function renderSalons() {
 
                     <div class="salon-services">
                         ${
-            services.length
-                ? services.map((service) => `<span class="service-tag">${escapeHtml(service)}</span>`).join("")
-                : `<span class="service-tag">No services listed</span>`
-        }
+                            services.length
+                                ? services.map((service) => `<span class="service-tag">${escapeHtml(service)}</span>`).join("")
+                                : `<span class="service-tag">No services listed</span>`
+                        }
                     </div>
 
                     <div class="salon-footer">
                         <div class="salon-rating">
                             ${
-            currentUser
-                ? `
+                                currentUser
+                                    ? `
                                         <span class="stars">★★★★★</span>
                                         <span class="review-count">${escapeHtml(reviews)} reviews</span>
                                       `
-                : `
+                                    : `
                                         <span class="review-count">Login to view reviews</span>
                                       `
-        }
+                            }
                         </div>
 
                         <button
@@ -136,15 +136,15 @@ function renderSalons() {
 
                     <div style="margin-top:12px;color:#6b6b6b;font-size:0.9rem;">
                         ${
-            currentUser
-                ? `
+                            currentUser
+                                ? `
                                     <div>📞 ${escapeHtml(contact)}</div>
                                     <div>🕒 ${escapeHtml(availability)}</div>
                                   `
-                : `
+                                : `
                                     <div>Login to view contact info and availability</div>
                                   `
-        }
+                        }
                     </div>
                 </div>
             </div>
@@ -178,9 +178,61 @@ function closeModal() {
 
     const bookingForm = document.querySelector("#bookingModal .booking-form");
     if (bookingForm) bookingForm.reset();
+
+    const emailField = document.getElementById("clientEmail");
+    if (emailField) {
+        emailField.readOnly = false;
+    }
 }
 
 window.closeModal = closeModal;
+
+async function sendBookingEmailWithWeb3Forms(bookingData) {
+    const formData = new FormData();
+
+    formData.append("access_key", "b3af3559-44b4-4083-812e-4d07b9d7dc6d");
+    formData.append("subject", `Booking Confirmation - ${bookingData.salonName}`);
+    formData.append("from_name", "BookMySalon");
+    formData.append("replyto", bookingData.email);
+
+    formData.append(
+        "autoresponse",
+        `Hi ${bookingData.name},
+
+Your booking has been confirmed.
+
+Salon: ${bookingData.salonName}
+Service: ${bookingData.service}
+Date: ${bookingData.date}
+Time: ${bookingData.time}
+Phone: ${bookingData.phone}
+${bookingData.notes ? `Notes: ${bookingData.notes}` : ""}
+
+Thank you for booking with BookMySalon.`
+    );
+
+    formData.append("name", bookingData.name);
+    formData.append("email", bookingData.email);
+    formData.append("phone", bookingData.phone);
+    formData.append("date", bookingData.date);
+    formData.append("time", bookingData.time);
+    formData.append("service", bookingData.service);
+    formData.append("salon", bookingData.salonName);
+    formData.append("notes", bookingData.notes || "");
+
+    const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+        throw new Error(result.message || "Web3Forms request failed");
+    }
+
+    return result;
+}
 
 window.submitBooking = async function (event) {
     event.preventDefault();
@@ -213,39 +265,7 @@ window.submitBooking = async function (event) {
 
     try {
         await addDoc(collection(db, "bookings"), bookingData);
-
-        await addDoc(collection(db, "mail"), {
-            to: [bookingData.email],
-            message: {
-                subject: `Booking Confirmed - ${bookingData.salonName}`,
-                text: `Hi ${bookingData.name},
-
-Your booking has been confirmed.
-
-Salon: ${bookingData.salonName}
-Service: ${bookingData.service}
-Date: ${bookingData.date}
-Time: ${bookingData.time}
-Phone: ${bookingData.phone}
-${bookingData.notes ? `Notes: ${bookingData.notes}` : ""}
-
-Thank you for booking with BookMySalon.`,
-                html: `
-                    <h2>Booking Confirmed</h2>
-                    <p>Hi ${escapeHtml(bookingData.name)},</p>
-                    <p>Your booking has been confirmed.</p>
-                    <ul>
-                        <li><strong>Salon:</strong> ${escapeHtml(bookingData.salonName)}</li>
-                        <li><strong>Service:</strong> ${escapeHtml(bookingData.service)}</li>
-                        <li><strong>Date:</strong> ${escapeHtml(bookingData.date)}</li>
-                        <li><strong>Time:</strong> ${escapeHtml(bookingData.time)}</li>
-                        <li><strong>Phone:</strong> ${escapeHtml(bookingData.phone)}</li>
-                    </ul>
-                    ${bookingData.notes ? `<p><strong>Notes:</strong> ${escapeHtml(bookingData.notes)}</p>` : ""}
-                    <p>Thank you for booking with BookMySalon.</p>
-                `
-            }
-        });
+        await sendBookingEmailWithWeb3Forms(bookingData);
 
         closeModal();
         showSuccessMessage();
@@ -315,6 +335,12 @@ window.handleAuth = async function (event) {
 
         if (currentSalon) {
             document.getElementById("selectedSalon").textContent = currentSalon.name || "";
+            const emailField = document.getElementById("clientEmail");
+            if (emailField && auth.currentUser?.email) {
+                emailField.value = auth.currentUser.email;
+                emailField.readOnly = true;
+            }
+
             document.getElementById("bookingModal").classList.add("show");
             document.body.style.overflow = "hidden";
         }
