@@ -16,6 +16,7 @@ import {
 } from "../firebase.js";
 
 let salons = [];
+let filteredSalons = [];
 let currentSalon = null;
 let currentUser = null;
 let isLoginMode = true;
@@ -31,6 +32,12 @@ function escapeHtml(value) {
 
 function showSalonsMessage(message) {
     const salonsGrid = document.getElementById("salonsGrid");
+
+    if (!salonsGrid) {
+        console.error("salonsGrid element not found");
+        return;
+    }
+
     salonsGrid.innerHTML = `
         <div class="salon-card" style="padding: 2rem;">
             <div class="salon-content">
@@ -62,14 +69,15 @@ async function loadSalons() {
             return;
         }
 
-        renderSalons();
+        filteredSalons = [...salons];
+        renderSalons(filteredSalons);
     } catch (error) {
         console.error("Error loading salons:", error);
         showSalonsMessage(`Failed to load salons: ${error.message}`);
     }
 }
 
-function renderSalons() {
+function renderSalons(list = salons) {
     const salonsGrid = document.getElementById("salonsGrid");
 
     if (!salonsGrid) {
@@ -77,12 +85,12 @@ function renderSalons() {
         return;
     }
 
-    if (!salons.length) {
-        showSalonsMessage("No salons available right now.");
+    if (!list.length) {
+        showSalonsMessage("No salons match your search.");
         return;
     }
 
-    salonsGrid.innerHTML = salons.map((salon) => {
+    salonsGrid.innerHTML = list.map((salon) => {
         const name = salon.name || "Unnamed Salon";
         const location = salon.location || "Location not added";
         const description = salon.description || "No description added yet.";
@@ -150,6 +158,61 @@ function renderSalons() {
             </div>
         `;
     }).join("");
+}
+
+function filterSalons() {
+    const cityValue = document.getElementById("citySearch")?.value.trim().toLowerCase() || "";
+    const serviceValue = document.getElementById("serviceSearch")?.value || "all";
+    const dateValue = document.getElementById("dateSearch")?.value || "";
+
+    filteredSalons = salons.filter((salon) => {
+        const location = String(salon.location || "").toLowerCase();
+        const name = String(salon.name || "").toLowerCase();
+        const services = Array.isArray(salon.services) ? salon.services : [];
+        const availability = String(salon.availability || "").toLowerCase();
+
+        const matchesCity =
+            !cityValue ||
+            location.includes(cityValue) ||
+            name.includes(cityValue);
+
+        const matchesService =
+            serviceValue === "all" ||
+            services.some((service) =>
+                String(service).toLowerCase().includes(serviceValue.toLowerCase())
+            );
+
+        const matchesDate =
+            !dateValue ||
+            availability.includes(dateValue.toLowerCase());
+
+        return matchesCity && matchesService && matchesDate;
+    });
+
+    renderSalons(filteredSalons);
+}
+
+function setupSearchUI() {
+    const searchBtn = document.getElementById("searchBtn");
+    const citySearch = document.getElementById("citySearch");
+    const serviceSearch = document.getElementById("serviceSearch");
+    const dateSearch = document.getElementById("dateSearch");
+
+    if (searchBtn) {
+        searchBtn.addEventListener("click", filterSalons);
+    }
+
+    if (citySearch) {
+        citySearch.addEventListener("input", filterSalons);
+    }
+
+    if (serviceSearch) {
+        serviceSearch.addEventListener("change", filterSalons);
+    }
+
+    if (dateSearch) {
+        dateSearch.addEventListener("change", filterSalons);
+    }
 }
 
 window.openBookingModal = function (salonId, salonName) {
@@ -369,7 +432,7 @@ function setupAuthUI() {
     onAuthStateChanged(auth, (user) => {
         currentUser = user;
         authBtn.textContent = user ? "Sign Out" : "Sign In";
-        renderSalons();
+        renderSalons(filteredSalons.length ? filteredSalons : salons);
     });
 }
 
@@ -381,5 +444,6 @@ window.onclick = function (event) {
     if (event.target === authModal) closeAuthModal();
 };
 
+setupSearchUI();
 setupAuthUI();
 loadSalons();

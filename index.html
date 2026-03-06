@@ -45,16 +45,19 @@
 <!-- Search Section -->
 <section class="search-section">
     <div class="search-container">
-        <input type="text" placeholder="City or area" class="search-input">
-        <select class="search-select">
-            <option>All Services</option>
-            <option>Haircut</option>
-            <option>Styling</option>
-            <option>Facial</option>
-            <option>Massage</option>
+        <input type="text" id="citySearch" placeholder="City or area" class="search-input">
+
+        <select id="serviceSearch" class="search-select">
+            <option value="all">All Services</option>
+            <option value="Haircut">Haircut</option>
+            <option value="Styling">Styling</option>
+            <option value="Facial">Facial</option>
+            <option value="Massage">Massage</option>
         </select>
-        <input type="date" class="search-input">
-        <button class="btn-primary">Search</button>
+
+        <input type="date" id="dateSearch" class="search-input">
+
+        <button class="btn-primary" id="searchBtn" type="button">Search</button>
     </div>
 </section>
 
