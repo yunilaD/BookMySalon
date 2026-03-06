@@ -16,7 +16,7 @@
             <li><a href="#services">Services</a></li>
             <li><a href="#about">About</a></li>
         </ul>
-        <button class="btn-signin">Sign In</button>
+        <button class="btn-signin" id="authActionBtn">Sign In</button>
     </nav>
 </header>
 
@@ -122,6 +122,33 @@
             </select>
             <textarea id="additionalNotes" placeholder="Special requests..."></textarea>
             <button type="submit" class="btn-primary btn-full">Confirm Booking</button>
+        </form>
+    </div>
+</div>
+
+<!-- Auth Modal -->
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeAuthModal()">×</button>
+        <div class="modal-header">
+            <h2 id="authTitle">Sign In</h2>
+            <div class="booking-summary">
+                <p>Login to book appointments and view full salon details.</p>
+            </div>
+        </div>
+
+        <form class="booking-form" onsubmit="handleAuth(event)">
+            <input type="email" id="authEmail" placeholder="Email" required>
+            <input type="password" id="authPassword" placeholder="Password" required>
+
+            <button type="submit" class="btn-primary btn-full" id="authSubmitBtn">
+                Sign In
+            </button>
+
+            <p style="text-align:center; margin-top:10px;">
+                <span id="authSwitchText">Don’t have an account?</span>
+                <a href="#" onclick="toggleAuthMode(event)">Create one</a>
+            </p>
         </form>
     </div>
 </div>
