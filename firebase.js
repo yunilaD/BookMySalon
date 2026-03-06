@@ -18,13 +18,12 @@ getDocs
 
 const firebaseConfig = {
 
-apiKey: "PASTE_HERE",
-authDomain: "PASTE_HERE",
-projectId: "PASTE_HERE",
-storageBucket: "PASTE_HERE",
-messagingSenderId: "PASTE_HERE",
-appId: "PASTE_HERE"
-
+apiKey: "AIzaSyAx2PwB0VcQXuY1j_c9uu-Mq6BVIJHKVQo",
+authDomain: "bookmysalon-efe40.firebaseapp.com",
+projectId: "bookmysalon-efe40",
+storageBucket: "bookmysalon-efe40.firebasestorage.app",
+messagingSenderId: "410919574149",
+appId: "1:410919574149:web:12acd805646220e58be7ec"
 };
 
 
