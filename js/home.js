@@ -5,6 +5,9 @@ import {
     auth,
     collection,
     getDocs,
+    addDoc,
+    setDoc,
+    doc,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     onAuthStateChanged,
@@ -16,83 +19,140 @@ let currentSalon = null;
 let currentUser = null;
 let isLoginMode = true;
 
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+}
+
+function showSalonsMessage(message) {
+    const salonsGrid = document.getElementById("salonsGrid");
+    salonsGrid.innerHTML = `
+        <div class="salon-card" style="padding: 2rem;">
+            <div class="salon-content">
+                <h3 class="salon-name">Notice</h3>
+                <p class="salon-description">${escapeHtml(message)}</p>
+            </div>
+        </div>
+    `;
+}
+
 async function loadSalons() {
-    console.log("Loading salons from Firestore...");
-    const querySnapshot = await getDocs(collection(db, "salons"));
+    try {
+        console.log("Loading salons from Firestore...");
+        const querySnapshot = await getDocs(collection(db, "salons"));
 
-    salons = [];
-    querySnapshot.forEach(doc => {
-        salons.push({
-            id: doc.id,
-            ...doc.data()
+        salons = [];
+
+        querySnapshot.forEach((docSnap) => {
+            salons.push({
+                id: docSnap.id,
+                ...docSnap.data()
+            });
         });
-    });
 
-    renderSalons();
+        console.log("Loaded salons:", salons);
+
+        if (!salons.length) {
+            showSalonsMessage("No salon data found in Firestore. Add documents to the salons collection.");
+            return;
+        }
+
+        renderSalons();
+    } catch (error) {
+        console.error("Error loading salons:", error);
+        showSalonsMessage(`Failed to load salons: ${error.message}`);
+    }
 }
 
 function renderSalons() {
     const salonsGrid = document.getElementById("salonsGrid");
 
-    salonsGrid.innerHTML = salons.map(salon => `
-        <div class="salon-card">
-            <div class="salon-image-wrapper">
-                <img src="${salon.image}" alt="${salon.name}">
-                <div class="salon-badge">Premium</div>
-            </div>
+    if (!salonsGrid) {
+        console.error("salonsGrid element not found");
+        return;
+    }
 
-            <div class="salon-content">
-                <h3 class="salon-name">${salon.name}</h3>
-                <div class="salon-location">📍 ${salon.location}</div>
+    if (!salons.length) {
+        showSalonsMessage("No salons available right now.");
+        return;
+    }
 
-                <p class="salon-description">${salon.description || ""}</p>
+    salonsGrid.innerHTML = salons.map((salon) => {
+        const name = salon.name || "Unnamed Salon";
+        const location = salon.location || "Location not added";
+        const description = salon.description || "No description added yet.";
+        const image = salon.image || "https://via.placeholder.com/800x500?text=Salon+Image";
+        const services = Array.isArray(salon.services) ? salon.services : [];
+        const reviews = salon.reviews ?? 0;
+        const contact = salon.contact || "No contact added";
+        const availability = salon.availability || "Availability not added";
 
-                <div class="salon-services">
-                    ${(salon.services || []).map(service =>
-        `<span class="service-tag">${service}</span>`
-    ).join("")}
+        return `
+            <div class="salon-card">
+                <div class="salon-image-wrapper">
+                    <img src="${escapeHtml(image)}" alt="${escapeHtml(name)}">
+                    <div class="salon-badge">Premium</div>
                 </div>
 
-                <div class="salon-footer">
-                    <div class="salon-rating">
+                <div class="salon-content">
+                    <h3 class="salon-name">${escapeHtml(name)}</h3>
+                    <div class="salon-location">📍 ${escapeHtml(location)}</div>
+
+                    <p class="salon-description">${escapeHtml(description)}</p>
+
+                    <div class="salon-services">
                         ${
-        currentUser
-            ? `
-                                <span class="stars">★★★★★</span>
-                                <span class="review-count">${salon.reviews || 0} reviews</span>
-                              `
-            : `
-                                <span class="review-count">Login to view reviews</span>
-                              `
-    }
+            services.length
+                ? services.map((service) => `<span class="service-tag">${escapeHtml(service)}</span>`).join("")
+                : `<span class="service-tag">No services listed</span>`
+        }
                     </div>
 
-                    <button 
-                        class="salon-book-btn"
-                        onclick="openBookingModal('${salon.id}', '${salon.name}')">
-                        Book
-                    </button>
-                </div>
+                    <div class="salon-footer">
+                        <div class="salon-rating">
+                            ${
+            currentUser
+                ? `
+                                        <span class="stars">★★★★★</span>
+                                        <span class="review-count">${escapeHtml(reviews)} reviews</span>
+                                      `
+                : `
+                                        <span class="review-count">Login to view reviews</span>
+                                      `
+        }
+                        </div>
 
-                <div style="margin-top: 12px; color: #6b6b6b; font-size: 0.9rem;">
-                    ${
-        currentUser
-            ? `
-                            <div>📞 ${salon.contact || "No contact added"}</div>
-                            <div>🕒 ${salon.availability || "Availability not added"}</div>
-                          `
-            : `
-                            <div>Login to view contact info and availability</div>
-                          `
-    }
+                        <button
+                            class="salon-book-btn"
+                            onclick="openBookingModal('${escapeHtml(salon.id)}', '${escapeHtml(name)}')">
+                            Book
+                        </button>
+                    </div>
+
+                    <div style="margin-top:12px;color:#6b6b6b;font-size:0.9rem;">
+                        ${
+            currentUser
+                ? `
+                                    <div>📞 ${escapeHtml(contact)}</div>
+                                    <div>🕒 ${escapeHtml(availability)}</div>
+                                  `
+                : `
+                                    <div>Login to view contact info and availability</div>
+                                  `
+        }
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join("");
+        `;
+    }).join("");
 }
 
 window.openBookingModal = function (salonId, salonName) {
-    currentSalon = salons.find(s => s.id === salonId);
+    currentSalon = salons.find((s) => s.id === salonId);
 
     if (!currentUser) {
         openAuthModal();
@@ -100,6 +160,13 @@ window.openBookingModal = function (salonId, salonName) {
     }
 
     document.getElementById("selectedSalon").textContent = salonName;
+
+    const emailField = document.getElementById("clientEmail");
+    if (emailField && currentUser?.email) {
+        emailField.value = currentUser.email;
+        emailField.readOnly = true;
+    }
+
     document.getElementById("bookingModal").classList.add("show");
     document.body.style.overflow = "hidden";
 };
@@ -107,12 +174,14 @@ window.openBookingModal = function (salonId, salonName) {
 function closeModal() {
     document.getElementById("bookingModal").classList.remove("show");
     document.body.style.overflow = "auto";
-    document.querySelector(".booking-form").reset();
+
+    const bookingForm = document.querySelector("#bookingModal .booking-form");
+    if (bookingForm) bookingForm.reset();
 }
 
 window.closeModal = closeModal;
 
-async function submitBooking(event) {
+window.submitBooking = async function (event) {
     event.preventDefault();
 
     if (!currentUser) {
@@ -121,30 +190,34 @@ async function submitBooking(event) {
         return;
     }
 
-    await addDoc(collection(db, "bookings"), {
+    if (!currentSalon) {
+        alert("Please select a salon first.");
+        return;
+    }
 
-        userId: currentUser.uid,
-        salonId: currentSalon.id,
-        salonName: currentSalon.name,
+    try {
+        await addDoc(collection(db, "bookings"), {
+            userId: currentUser.uid,
+            salonId: currentSalon.id,
+            salonName: currentSalon.name || "",
+            name: document.getElementById("clientName").value.trim(),
+            email: document.getElementById("clientEmail").value.trim(),
+            phone: document.getElementById("clientPhone").value.trim(),
+            date: document.getElementById("appointmentDate").value,
+            time: document.getElementById("appointmentTime").value,
+            service: document.getElementById("servicePreference").value,
+            notes: document.getElementById("additionalNotes").value.trim(),
+            status: "pending",
+            createdAt: new Date()
+        });
 
-        name: document.getElementById("clientName").value,
-        email: document.getElementById("clientEmail").value,
-        phone: document.getElementById("clientPhone").value,
-
-        date: document.getElementById("appointmentDate").value,
-        time: document.getElementById("appointmentTime").value,
-
-        service: document.getElementById("servicePreference").value,
-        notes: document.getElementById("additionalNotes").value,
-
-        createdAt: new Date()
-    });
-
-    closeModal();
-    showSuccessMessage();
-}
-
-window.submitBooking = submitBooking;
+        closeModal();
+        showSuccessMessage();
+    } catch (error) {
+        console.error("Booking error:", error);
+        alert(`Booking failed: ${error.message}`);
+    }
+};
 
 function showSuccessMessage() {
     const successMsg = document.getElementById("successMessage");
@@ -194,21 +267,23 @@ window.handleAuth = async function (event) {
 
             await setDoc(doc(db, "users", user.uid), {
                 uid: user.uid,
-                email: email,
+                email,
                 role: "customer",
                 createdAt: new Date()
             });
+
             alert("Account created successfully");
         }
 
         closeAuthModal();
 
         if (currentSalon) {
-            document.getElementById("selectedSalon").textContent = currentSalon.name;
+            document.getElementById("selectedSalon").textContent = currentSalon.name || "";
             document.getElementById("bookingModal").classList.add("show");
             document.body.style.overflow = "hidden";
         }
     } catch (error) {
+        console.error("Auth error:", error);
         alert(error.message);
     }
 };
@@ -217,18 +292,21 @@ function setupAuthUI() {
     const authBtn = document.getElementById("authActionBtn");
 
     authBtn.addEventListener("click", async () => {
-        if (currentUser) {
-            await signOut(auth);
-        } else {
-            openAuthModal();
+        try {
+            if (currentUser) {
+                await signOut(auth);
+            } else {
+                openAuthModal();
+            }
+        } catch (error) {
+            console.error("Sign out error:", error);
+            alert(error.message);
         }
     });
 
     onAuthStateChanged(auth, (user) => {
         currentUser = user;
-
         authBtn.textContent = user ? "Sign Out" : "Sign In";
-
         renderSalons();
     });
 }
