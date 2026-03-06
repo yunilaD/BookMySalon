@@ -196,26 +196,61 @@ window.submitBooking = async function (event) {
         return;
     }
 
+    const bookingData = {
+        userId: currentUser.uid,
+        salonId: currentSalon.id,
+        salonName: currentSalon.name || "",
+        name: document.getElementById("clientName").value.trim(),
+        email: document.getElementById("clientEmail").value.trim(),
+        phone: document.getElementById("clientPhone").value.trim(),
+        date: document.getElementById("appointmentDate").value,
+        time: document.getElementById("appointmentTime").value,
+        service: document.getElementById("servicePreference").value,
+        notes: document.getElementById("additionalNotes").value.trim(),
+        status: "pending",
+        createdAt: serverTimestamp()
+    };
+
     try {
-        await addDoc(collection(db, "bookings"), {
-            userId: currentUser.uid,
-            salonId: currentSalon.id,
-            salonName: currentSalon.name || "",
-            name: document.getElementById("clientName").value.trim(),
-            email: document.getElementById("clientEmail").value.trim(),
-            phone: document.getElementById("clientPhone").value.trim(),
-            date: document.getElementById("appointmentDate").value,
-            time: document.getElementById("appointmentTime").value,
-            service: document.getElementById("servicePreference").value,
-            notes: document.getElementById("additionalNotes").value.trim(),
-            status: "pending",
-            createdAt: new Date()
+        await addDoc(collection(db, "bookings"), bookingData);
+
+        await addDoc(collection(db, "mail"), {
+            to: [bookingData.email],
+            message: {
+                subject: `Booking Confirmed - ${bookingData.salonName}`,
+                text: `Hi ${bookingData.name},
+
+Your booking has been confirmed.
+
+Salon: ${bookingData.salonName}
+Service: ${bookingData.service}
+Date: ${bookingData.date}
+Time: ${bookingData.time}
+Phone: ${bookingData.phone}
+${bookingData.notes ? `Notes: ${bookingData.notes}` : ""}
+
+Thank you for booking with BookMySalon.`,
+                html: `
+                    <h2>Booking Confirmed</h2>
+                    <p>Hi ${escapeHtml(bookingData.name)},</p>
+                    <p>Your booking has been confirmed.</p>
+                    <ul>
+                        <li><strong>Salon:</strong> ${escapeHtml(bookingData.salonName)}</li>
+                        <li><strong>Service:</strong> ${escapeHtml(bookingData.service)}</li>
+                        <li><strong>Date:</strong> ${escapeHtml(bookingData.date)}</li>
+                        <li><strong>Time:</strong> ${escapeHtml(bookingData.time)}</li>
+                        <li><strong>Phone:</strong> ${escapeHtml(bookingData.phone)}</li>
+                    </ul>
+                    ${bookingData.notes ? `<p><strong>Notes:</strong> ${escapeHtml(bookingData.notes)}</p>` : ""}
+                    <p>Thank you for booking with BookMySalon.</p>
+                `
+            }
         });
 
         closeModal();
         showSuccessMessage();
     } catch (error) {
-        console.error("Booking error:", error);
+        console.error("Booking/email error:", error);
         alert(`Booking failed: ${error.message}`);
     }
 };
@@ -270,7 +305,7 @@ window.handleAuth = async function (event) {
                 uid: user.uid,
                 email,
                 role: "customer",
-                createdAt: new Date()
+                createdAt: serverTimestamp()
             });
 
             alert("Account created successfully");
