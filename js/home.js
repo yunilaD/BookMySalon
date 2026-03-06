@@ -112,7 +112,7 @@ function closeModal() {
 
 window.closeModal = closeModal;
 
-function submitBooking(event) {
+async function submitBooking(event) {
     event.preventDefault();
 
     if (!currentUser) {
