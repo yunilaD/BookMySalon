@@ -1,6 +1,6 @@
 # BookMySalon – Salon Booking Management System
 
-BookMySalon is a modern **web-based salon appointment booking platform** that allows users to easily discover salons, create accounts, and schedule appointments online.
+BookMySalon is a modern **web-based salon appointment booking platform in Sri Lanka** that allows users to easily discover salons, and schedule appointments online.
 
 The platform helps customers find trusted salons and book services instantly while enabling salons to manage bookings efficiently.
 
