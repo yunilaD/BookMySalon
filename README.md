@@ -8,9 +8,7 @@ The platform helps customers find trusted salons and book services instantly whi
 
 # Live Demo
 
-🌐 https://bookmysalon.pages.dev
-*(Replace with your actual deployed link if different)*
-
+🌐 https://bookmysalon.yunilad2006.workers.dev/
 ---
 
 # Features
